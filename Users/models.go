@@ -21,6 +21,7 @@ type updateUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
 // user response
 type UserResponse struct {
 	ID        uuid.UUID `json:"id"`
