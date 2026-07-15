@@ -12,14 +12,15 @@ func main() {
 	//	initialise server handler
 	mux := http.NewServeMux()
 
-	//pass arg to routes func
+	// register routes
 	registerRoutes(mux)
-	// init server struct and values
+
+	// init server struct
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: mux,
 	}
 
-	//start server
+	// run server
 	log.Fatal(server.ListenAndServe())
 }
