@@ -11,6 +11,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type RefreshToken struct {
+	Token     string       `json:"token"`
+	ExpiresAt time.Time    `json:"expires_at"`
+	RevokedAt sql.NullTime `json:"revoked_at"`
+	UserID    uuid.UUID    `json:"user_id"`
+	CreatedAt time.Time    `json:"created_at"`
+	UpdatedAt time.Time    `json:"updated_at"`
+}
+
 type Transaction struct {
 	ID          uuid.UUID    `json:"id"`
 	UserID      uuid.UUID    `json:"user_id"`
@@ -25,8 +34,9 @@ type Transaction struct {
 }
 
 type User struct {
-	ID        uuid.UUID `json:"id"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID             uuid.UUID `json:"id"`
+	Email          string    `json:"email"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
+	HashedPassword string    `json:"hashed_password"`
 }
