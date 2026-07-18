@@ -1,8 +1,9 @@
 -- name: CreateUser :one
-INSERT INTO users(id, email, created_at, updated_at)
+INSERT INTO users(id,email, hashed_password, created_at, updated_at)
 VALUES (
     gen_random_uuid(),
     $1,
+    $2,
     now(),
     now()
 )
@@ -20,6 +21,7 @@ WHERE id= $1;
 UPDATE users
 SET 
     email=$2,
+    hashed_password = $3,
     updated_at= now()
 WHERE id =$1
 RETURNING *;

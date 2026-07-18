@@ -12,18 +12,24 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users(id, email, created_at, updated_at)
+INSERT INTO users(id,email, hashed_password, created_at, updated_at)
 VALUES (
     gen_random_uuid(),
     $1,
+    $2,
     now(),
     now()
 )
 RETURNING id, email, created_at, updated_at, hashed_password
 `
 
-func (q *Queries) CreateUser(ctx context.Context, email string) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, email)
+type CreateUserParams struct {
+	Email          string `json:"email"`
+	HashedPassword string `json:"hashed_password"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.HashedPassword)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -75,18 +81,20 @@ const updateUser = `-- name: UpdateUser :one
 UPDATE users
 SET 
     email=$2,
+    hashed_password = $3,
     updated_at= now()
 WHERE id =$1
 RETURNING id, email, created_at, updated_at, hashed_password
 `
 
 type UpdateUserParams struct {
-	ID    uuid.UUID `json:"id"`
-	Email string    `json:"email"`
+	ID             uuid.UUID `json:"id"`
+	Email          string    `json:"email"`
+	HashedPassword string    `json:"hashed_password"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUser, arg.ID, arg.Email)
+	row := q.db.QueryRowContext(ctx, updateUser, arg.ID, arg.Email, arg.HashedPassword)
 	var i User
 	err := row.Scan(
 		&i.ID,

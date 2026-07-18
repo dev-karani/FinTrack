@@ -24,6 +24,7 @@ func main() {
 	dbURL := os.Getenv("DB_URL")
 	platform := os.Getenv("APP_ENV")
 
+	fmt.Println(port)
 	if jwtSecret == "" {
 		log.Fatal("missing jwt secret")
 	}

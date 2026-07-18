@@ -4,7 +4,7 @@ import (
 	"github.com/dev-karani/FinTrack/internal/database"
 )
 
-type api struct {
+type apiConfig struct {
 	db        *database.Queries
 	jwtSecret string
 	platform  string

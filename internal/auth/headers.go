@@ -8,7 +8,7 @@ import (
 
 func GetBearerToken(headers http.Header) (string, error) {
 	// confirm authorization header
-	authstring := headers.Get("authorization")
+	authstring := headers.Get("Authorization")
 	if authstring == "" {
 		return "", errors.New("missing authorization header")
 	}
@@ -25,6 +25,6 @@ func GetBearerToken(headers http.Header) (string, error) {
 	if token == "" {
 		return "", errors.New("missing bearer token")
 	}
-
+	token = strings.TrimSpace(token)
 	return token, nil
 }

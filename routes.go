@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func registerRoutes(mux *http.ServeMux) {
+func registerRoutes(mux *http.ServeMux, cfg *apiConfig) {
 
 	// root path
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
