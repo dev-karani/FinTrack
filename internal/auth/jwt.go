@@ -6,26 +6,25 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang-jwt/jwt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
-func MakeJwt(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (string, error) {
+func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (string, error) {
 	//define claims structure
 	//RETURN tokenSecret
 
 	claims := jwt.RegisteredClaims{
 		Issuer:    "fintrack-access",
-		IssuedAt:  jwt.NumericDate(time.Now().UTC()),
-		ExpiresAt: jwt.NumericDate(time.Now().Add(expiresIn)),
+		IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiresIn)),
 		Subject:   userID.String(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	signedToken, err := token.SignedString([]byte(tokenSecret))
 	if err != nil {
-		return "", err
+		return "", nil
 	}
 
 	return signedToken, nil
@@ -51,7 +50,7 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	return userID, nil
 }
 
-func MakeRefreshTokens() (string, error) {
+func MakeRefreshToken() (string, error) {
 	key := make([]byte, 32)
 	_, err := rand.Read(key)
 	if err != nil {
