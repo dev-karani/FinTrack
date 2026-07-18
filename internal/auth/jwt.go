@@ -1,6 +1,9 @@
 package auth
 
 import (
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -46,4 +49,14 @@ func ValidateJWT(tokenString, tokenSecret string) (uuid.UUID, error) {
 	}
 
 	return userID, nil
+}
+
+func MakeRefreshTokens() (string, error) {
+	key := make([]byte, 32)
+	_, err := rand.Read(key)
+	if err != nil {
+		fmt.Println("error creating randomKey")
+		return "", err
+	}
+	return hex.EncodeToString(key), nil
 }
