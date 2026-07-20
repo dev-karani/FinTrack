@@ -31,10 +31,5 @@ func (s *Service) CreateUser(ctx context.Context, email string, password string)
 		return database.User{}, err
 	}
 
-	return database.User{
-		ID:        dbUser.ID,
-		CreatedAt: dbUser.CreatedAt,
-		UpdatedAt: dbUser.UpdatedAt,
-		Email:     dbUser.Email,
-	}, nil
+	return dbUser, nil
 }
