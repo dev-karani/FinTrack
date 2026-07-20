@@ -20,5 +20,6 @@ func (s *Service) CreateTransaction(ctx context.Context, amount int32, category,
 	//get user id from validate jwt
 	//pass post to create post fuunction
 	//return
+	return
 
 }
