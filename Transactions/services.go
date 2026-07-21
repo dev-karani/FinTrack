@@ -3,23 +3,39 @@ package transactions
 import (
 	"context"
 
+	"github.com/dev-karani/FinTrack/internal/auth"
 	"github.com/dev-karani/FinTrack/internal/database"
 )
 
 type Service struct {
-	db *database.Queries
+	db        *database.Queries
+	jwtSecret string
 }
 
-func NewService(db database.Queries) *Service {
+func NewService(db *database.Queries, jwtSecret string) *Service {
 	return &Service{
-		db: db,
+		db:        db,
+		jwtSecret: jwtSecret,
 	}
 }
 
-func (s *Service) CreateTransaction(ctx context.Context, amount int32, category, label, source, destination string) (database.User, error) {
-	//get user id from validate jwt
-	//pass post to create post fuunction
-	//return
-	return
+func (s *Service) CreateTransaction(ctx context.Context, token string, amount int64, category, label, source, destination string) (database.Transaction, error) {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return database.Transaction{}, err
+	}
+	transaction, err := s.db.CreateTransaction(ctx, database.CreateTransactionParams{
+		UserID:      userID,
+		Amount:      int64(amount),
+		Label:       label,
+		Category:    category,
+		Source:      source,
+		Destination: destination,
+	})
+
+	if err != nil {
+		return database.Transaction{}, err
+	}
+	return transaction, nil
 
 }
