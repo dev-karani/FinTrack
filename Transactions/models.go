@@ -5,7 +5,7 @@ import (
 )
 
 type createTransactionRequest struct {
-	Amount      int    `json:"amount"`
+	Amount      int64  `json:"amount"`
 	Label       string `json:"label"`
 	Category    string `json:"category_type"`
 	Source      string `json:"origin_account"`
@@ -13,7 +13,7 @@ type createTransactionRequest struct {
 }
 
 type createTransactionResponse struct {
-	Amount      int32     `json:"amount"`
+	Amount      int64     `json:"amount"`
 	Label       string    `json:"label"`
 	Category    string    `json:"category_type"`
 	Source      string    `json:"origin_account"`
