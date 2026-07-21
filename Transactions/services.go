@@ -26,7 +26,7 @@ func (s *Service) CreateTransaction(ctx context.Context, token string, amount in
 	}
 	transaction, err := s.db.CreateTransaction(ctx, database.CreateTransactionParams{
 		UserID:      userID,
-		Amount:      int64(amount),
+		Amount:      amount,
 		Label:       label,
 		Category:    category,
 		Source:      source,

@@ -34,14 +34,14 @@ func (h Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transaction, err := h.service.CreateTransaction(token, req.Amount, req.Category, req.Label, req.Source, req.Destination)
+	transaction, err := h.service.CreateTransaction(r.Context(), token, req.Amount, req.Category, req.Label, req.Source, req.Destination)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusInternalServerError, "couldnt create user")
 		return
 	}
 
 	httpx.RespondWithJSON(w, http.StatusCreated, createTransactionResponse{
-		Amount:      int32(transaction.Amount),
+		Amount:      transaction.Amount,
 		Label:       transaction.Label,
 		Category:    transaction.Category,
 		Source:      transaction.Source,
