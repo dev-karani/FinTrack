@@ -39,3 +39,11 @@ func (s *Service) CreateTransaction(ctx context.Context, token string, amount in
 	return transaction, nil
 
 }
+
+func (s *Service) GetUserTransactions(ctx context.Context, token string) (database.Transaction, error) {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return database.Transaction{}, err
+	}
+
+}

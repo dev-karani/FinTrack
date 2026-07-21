@@ -21,11 +21,11 @@ func NewHandler(db *database.Queries, jwtSecret string) *Handler {
 	}
 }
 
-func (h Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	req := createTransactionRequest{}
 	if err := decoder.Decode(&req); err != nil {
-		httpx.RespondWithError(w, http.StatusBadRequest, "invalid request body")
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
 		return
 	}
 	token, err := auth.GetBearerToken(r.Header)
@@ -49,4 +49,20 @@ func (h Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:   transaction.CreatedAt,
 		UpdatedAt:   transaction.UpdatedAt,
 	})
+}
+
+func (h *Handler) GetAllUserTransactions(w http.ResponseWriter, r *http.Request) {
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
+		return
+	}
+
+	transactions, err := h.service.GetUserTransactions(r.Context(), token)
+		if err != nil {
+			httpx.RespondWithError(w, http.StatusInternalServerError, "failed to get transactions")
+			return
+		}
+	}
+
 }
