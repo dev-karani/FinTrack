@@ -65,4 +65,17 @@ func (h *Handler) GetAllUserTransactions(w http.ResponseWriter, r *http.Request)
 		}
 	}
 
+	transactionResponse := make([]createTransactionResponse, 0, len(transactions))
+	for _, transaction := range transactions{
+		transactionResponse.append(transactionResponse, createTransactionResponse{
+			Amount:transaction.Amount,:w http.ResponseWriter, r *http.Request
+			Label: transaction.Label,
+			Category:transaction.Category,
+			Source:transaction.Source,
+			Destination:transaction.Destination,
+			CreatedAt: transaction.CreatedAt,
+			UpdatedAt:transaction.UpdatedAt
+		})
+	}
+	return httpx.RespondWithJSON(w, http.StatusOk, transactionResponse)
 }
