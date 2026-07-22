@@ -40,17 +40,15 @@ func (s *Service) CreateTransaction(ctx context.Context, token string, amount in
 
 }
 
-func (s *Service) GetUserTransactions(ctx context.Context, token string) (database.Transaction, error) {
-	var transactions []database.Transaction
-
+func (s *Service) GetUserTransactions(ctx context.Context, token string) ([]database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
-		return database.Transaction{}, err
+		return nil, err
 	}
 
-	transactions, err ;= s.db.GetAllTransactionsByUserID(ctx, userID)
-	if err !=nil {
-		return database.Transaction{}, err
+	transactions, err := s.db.GetAllTransactionsByUserID(ctx, userID)
+	if err != nil {
+		return nil, err
 	}
-	return transactions[], nil
-} 
+	return transactions, nil
+}
