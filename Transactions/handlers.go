@@ -25,7 +25,7 @@ func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	req := createTransactionRequest{}
 	if err := decoder.Decode(&req); err != nil {
-		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid req body")
 		return
 	}
 	token, err := auth.GetBearerToken(r.Header)
@@ -80,5 +80,29 @@ func (h *Handler) GetAllUserTransactions(w http.ResponseWriter, r *http.Request)
 }
 
 func (h *Handler) UpdateTransaction(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	req := updateTransactionRequest{}
+	if err := decoder.Decode(&req); err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
+		return
+	}
 
+	transaction, err := h.service.UpdateTransactionByID(r.Context(), token, req.Amount, req.Label, req.Destination, req.Category, req.Source)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "error updating transaction")
+		return
+	}
+
+	httpx.RespondWithJSON(w, http.StatusOK, updateTransactionResponse{
+		Amount:      transaction.Amount,
+		Label:       transaction.Label,
+		Category:    transaction.Category,
+		Source:      transaction.Source,
+		Destination: transaction.Destination,
+	})
 }

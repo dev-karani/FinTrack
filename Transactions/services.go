@@ -53,10 +53,23 @@ func (s *Service) GetUserTransactions(ctx context.Context, token string) ([]data
 	return transactions, nil
 }
 
-func (s *Service) UpdateTransactionByID(ctx context.Context, token string) (database.Transaction, error) {
+func (s *Service) UpdateTransactionByID(ctx context.Context, token string, amount int64, category, label, source, destination string) (database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
 		return database.Transaction{}, err
 	}
 
+	transaction, err := s.db.UpdateTransactionByID(ctx, database.UpdateTransactionByIDParams{
+		UserID:      userID,
+		Amount:      amount,
+		Category:    category,
+		Label:       label,
+		Source:      source,
+		Destination: destination,
+	})
+	if err != nil {
+		return database.Transaction{}, err
+	}
+
+	return transaction, nil
 }
