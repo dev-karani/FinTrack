@@ -123,3 +123,49 @@ func (q *Queries) GetTransactionByID(ctx context.Context, id uuid.UUID) (Transac
 	)
 	return i, err
 }
+
+const updateTransactionByID = `-- name: UpdateTransactionByID :one
+UPDATE transactions
+SET 
+    amount=$2,
+    label=$3,
+    category=$4,
+    source=$5,
+    destination=$6
+WHERE id=$1
+RETURNING id, user_id, amount, label, category, source, destination, created_at, updated_at, deleted_at
+`
+
+type UpdateTransactionByIDParams struct {
+	ID          uuid.UUID `json:"id"`
+	Amount      int64     `json:"amount"`
+	Label       string    `json:"label"`
+	Category    string    `json:"category"`
+	Source      string    `json:"source"`
+	Destination string    `json:"destination"`
+}
+
+func (q *Queries) UpdateTransactionByID(ctx context.Context, arg UpdateTransactionByIDParams) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, updateTransactionByID,
+		arg.ID,
+		arg.Amount,
+		arg.Label,
+		arg.Category,
+		arg.Source,
+		arg.Destination,
+	)
+	var i Transaction
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Amount,
+		&i.Label,
+		&i.Category,
+		&i.Source,
+		&i.Destination,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}

@@ -21,3 +21,14 @@ ORDER BY created_at ASC;
 -- name: GetTransactionByID :one
 SELECT * FROM transactions
 WHERE id=$1;
+
+-- name: UpdateTransactionByID :one
+UPDATE transactions
+SET 
+    amount=$2,
+    label=$3,
+    category=$4,
+    source=$5,
+    destination=$6
+WHERE id=$1
+RETURNING *;
