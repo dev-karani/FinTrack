@@ -7,6 +7,7 @@ import (
 	"github.com/dev-karani/FinTrack/internal/auth"
 	"github.com/dev-karani/FinTrack/internal/database"
 	httpx "github.com/dev-karani/FinTrack/internal/httpX"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -86,15 +87,32 @@ func (h *Handler) UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 		httpx.RespondWithError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	token, err := auth.GetBearerToken(r.Header)
+
+	transactionID, err := uuid.Parse(r.PathValue("transactionID"))
 	if err != nil {
-		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid transaction ID")
 		return
 	}
 
-	transaction, err := h.service.UpdateTransactionByID(r.Context(), token, req.ID, req.Amount, req.Label, req.Destination, req.Category, req.Source)
+	token, err := auth.GetBearerToken(r.Header)
 	if err != nil {
-		httpx.RespondWithError(w, http.StatusInternalServerError, "error updating transaction")
+		httpx.RespondWithError(w, http.StatusBadRequest, "missing auth header")
+		return
+	}
+
+	transaction, err := h.service.UpdateTransactionByID(
+		r.Context(),
+		token,
+		transactionID,
+		req.Amount,
+		req.Label,
+		req.Category,
+		req.Source,
+		req.Destination,
+	)
+
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to update transaction")
 		return
 	}
 
