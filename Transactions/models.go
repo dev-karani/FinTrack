@@ -29,3 +29,13 @@ type updateTransactionRequest struct {
 	Source      string `json:"source"`
 	Destination string `json:"destination"`
 }
+
+type updateTransactionResponse struct {
+	Amount      int64     `json:"amount"`
+	Label       string    `json:"label"`
+	Category    string    `json:"category"`
+	Source      string    `json:"source"`
+	Destination string    `json:"destination"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+}
