@@ -21,3 +21,11 @@ type createTransactionResponse struct {
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
+
+type updateTransactionRequest struct {
+	Amount      int64  `json:"amount"`
+	Label       string `json:"label"`
+	Category    string `json:"category"`
+	Source      string `json:"source"`
+	Destination string `json:"destination"`
+}

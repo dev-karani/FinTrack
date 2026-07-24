@@ -78,3 +78,7 @@ func (h *Handler) GetAllUserTransactions(w http.ResponseWriter, r *http.Request)
 	}
 	httpx.RespondWithJSON(w, http.StatusOK, transactionResponse)
 }
+
+func (h *Handler) UpdateTransaction(w http.ResponseWriter, r *http.Request) {
+
+}
