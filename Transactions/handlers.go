@@ -92,17 +92,19 @@ func (h *Handler) UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transaction, err := h.service.UpdateTransactionByID(r.Context(), token, req.Amount, req.Label, req.Destination, req.Category, req.Source)
+	transaction, err := h.service.UpdateTransactionByID(r.Context(), token, req.ID, req.Amount, req.Label, req.Destination, req.Category, req.Source)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusInternalServerError, "error updating transaction")
 		return
 	}
 
 	httpx.RespondWithJSON(w, http.StatusOK, updateTransactionResponse{
+		ID:          transaction.ID,
 		Amount:      transaction.Amount,
 		Label:       transaction.Label,
 		Category:    transaction.Category,
 		Source:      transaction.Source,
 		Destination: transaction.Destination,
+		UpdatedAt:   transaction.UpdatedAt,
 	})
 }

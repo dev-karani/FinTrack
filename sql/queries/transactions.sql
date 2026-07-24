@@ -25,10 +25,11 @@ WHERE id=$1;
 -- name: UpdateTransactionByID :one
 UPDATE transactions
 SET 
-    amount=$2,
-    label=$3,
-    category=$4,
-    source=$5,
-    destination=$6
+    amount=$3,
+    label=$4,
+    category=$5,
+    source=$6,
+    destination=$7
 WHERE id=$1
+AND user_id=$2
 RETURNING *;

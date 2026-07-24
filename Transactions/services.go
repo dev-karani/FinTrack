@@ -5,6 +5,7 @@ import (
 
 	"github.com/dev-karani/FinTrack/internal/auth"
 	"github.com/dev-karani/FinTrack/internal/database"
+	"github.com/google/uuid"
 )
 
 type Service struct {
@@ -53,14 +54,14 @@ func (s *Service) GetUserTransactions(ctx context.Context, token string) ([]data
 	return transactions, nil
 }
 
-func (s *Service) UpdateTransactionByID(ctx context.Context, token string, amount int64, category, label, source, destination string) (database.Transaction, error) {
-	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+func (s *Service) UpdateTransactionByID(ctx context.Context, token string, id uuid.UUID, amount int64, category, label, source, destination string) (database.Transaction, error) {
+	_, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
 		return database.Transaction{}, err
 	}
 
 	transaction, err := s.db.UpdateTransactionByID(ctx, database.UpdateTransactionByIDParams{
-		UserID:      userID,
+		ID:          id,
 		Amount:      amount,
 		Category:    category,
 		Label:       label,
