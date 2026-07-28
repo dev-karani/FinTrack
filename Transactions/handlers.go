@@ -126,3 +126,26 @@ func (h *Handler) UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:   transaction.UpdatedAt,
 	})
 }
+
+func (h *Handler) DeleteTransactionByID(w http.ResponseWriter, r *http.Request) {
+	//get id from url PathValue
+	transactionID, err := uuid.Parse(r.PathValue("transactionID"))
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid transaction ID")
+	}
+	// get token
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "missing auth header")
+		return
+	}
+
+	//pass id to transaction service
+	transaction, err := h.service.DeleteTranactionByID(r.Context(), token)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to delete transaction")
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}

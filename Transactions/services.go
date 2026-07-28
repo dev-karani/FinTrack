@@ -80,3 +80,10 @@ func (s *Service) UpdateTransactionByID(ctx context.Context, token string, trans
 
 	return transaction, nil
 }
+
+func (s *Service) DeleteTransactionByID() (database.Transaction, error) {
+	//receive token
+	//authenticate user
+	//
+
+}
