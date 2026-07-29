@@ -146,6 +146,7 @@ SET
     destination=$7
 WHERE id=$1
 AND user_id=$2
+AND deleted_at=NULL
 RETURNING id, user_id, amount, label, category, source, destination, created_at, updated_at, deleted_at
 `
 

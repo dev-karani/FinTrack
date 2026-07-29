@@ -20,7 +20,9 @@ ORDER BY created_at ASC;
 
 -- name: GetTransactionByID :one
 SELECT * FROM transactions
-WHERE id=$1;
+WHERE id=$1
+AND deleted_at=NULL
+RETURNING *;
 
 -- name: UpdateTransactionByID :one
 UPDATE transactions
