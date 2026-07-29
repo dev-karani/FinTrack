@@ -61,6 +61,18 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 	return i, err
 }
 
+const deleteTransactionBYID = `-- name: DeleteTransactionBYID :exec
+UPDATE transactions
+SET
+    deleted_at=True
+WHERE id=$1
+`
+
+func (q *Queries) DeleteTransactionBYID(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteTransactionBYID, id)
+	return err
+}
+
 const getAllTransactionsByUserID = `-- name: GetAllTransactionsByUserID :many
 SELECT id, user_id, amount, label, category, source, destination, created_at, updated_at, deleted_at FROM transactions
 WHERE user_id= $1
