@@ -16,7 +16,20 @@ type loginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+type LoginResult struct {
+	User         database.User
+	JWTToken     string
+	RefreshToken string
+}
 
+type LoginResponse struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Email     string    `json:"email"`
+	JWTToken     string   `json:"jwt_token"`
+	RefreshToken string `json:"refresh_token"`
+}
 type updateUserRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -29,3 +42,5 @@ type UserResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Email     string    `json:"email"`
 }
+
+

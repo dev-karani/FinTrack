@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"time"
 
 	"github.com/dev-karani/FinTrack/internal/auth"
 	"github.com/dev-karani/FinTrack/internal/database"
@@ -52,5 +53,38 @@ func (s *Service) DeleteUser(ctx context.Context, token string) error {
 	}
 
 	return nil
+
+}
+
+func (s *Service) Login(ctx context.Context, email, password string) (database.Transaction, error) {
+	user, err := s.db.GetUserByEmail(ctx, email)
+	if err != nil {
+		return database.Transaction{}, err
+	}
+
+	match, err := auth.CheckPasswordHash(password, user.HashedPassword)
+	if err != nil || !match {
+		return database.Transaction{}, err
+	}
+
+	jwtToken, err := auth.MakeJWT(user.ID, s.jwtSecret, time.Hour)
+	if err != nil {
+		return database.Transaction{}, err
+	}
+
+	refreshToken, err := auth.MakeRefreshToken()
+	if err != nil {
+		return database.Transaction{}, err
+	}
+
+	now := time.Now().UTC()
+
+	_, err = s.db.CreateRefreshToken(ctx, database.CreateRefreshTokenParams{
+		Token:     refreshToken,
+		CreatedAt: now,
+		UpdatedAt: now,
+		UserID:    user.ID,
+		ExpiresAt: now.Add(60 * 24 * time.Hour),
+	})
 
 }

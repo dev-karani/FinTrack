@@ -57,3 +57,18 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 
 }
+
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	req := loginRequest{}
+	if err := decoder.Decode(&req); err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	userDetails, err := h.service.Login(r.Context(), req.Email, req.Password)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusUnauthorized, "invalid email or passwrod")
+		return
+	}
+}
