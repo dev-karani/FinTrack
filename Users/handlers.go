@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dev-karani/FinTrack/internal/auth"
 	"github.com/dev-karani/FinTrack/internal/database"
 	httpx "github.com/dev-karani/FinTrack/internal/httpX"
 )
@@ -40,4 +41,18 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	})
+}
+
+func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	err = h.service.db.DeleteTransactionByID(r.Context(), token)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "")
+	}
+
 }

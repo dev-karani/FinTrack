@@ -33,3 +33,7 @@ func (s *Service) CreateUser(ctx context.Context, email string, password string)
 
 	return dbUser, nil
 }
+
+func (s *Service) DeleteUser (ctx context.Context, token string) (error) {
+	userID, err := auth.ValidateJWT(token, s.db.)
+}
