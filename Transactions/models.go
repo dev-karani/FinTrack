@@ -15,6 +15,7 @@ type createTransactionRequest struct {
 }
 
 type createTransactionResponse struct {
+	ID          uuid.UUID `json:"id"`
 	Amount      int64     `json:"amount"`
 	Label       string    `json:"label"`
 	Category    string    `json:"category_type"`
