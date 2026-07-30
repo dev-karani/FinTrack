@@ -2,7 +2,6 @@ package transactions
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/dev-karani/FinTrack/internal/auth"
 	"github.com/dev-karani/FinTrack/internal/database"
@@ -57,8 +56,8 @@ func (s *Service) GetUserTransactions(ctx context.Context, token string) ([]data
 	return transactions, nil
 }
 
-// get trans
-func (s *Service) UpdateTransactionByID(ctx context.Context, token string, transactionID uuid.UUID, amount int64, category, label, source, destination string) (database.Transaction, error) {
+// get transaction
+func (s *Service) UpdateTransactionByID(ctx context.Context, token string, transactionID uuid.UUID, amount int64, label, category, source, destination string) (database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
 		return database.Transaction{}, err
@@ -75,19 +74,16 @@ func (s *Service) UpdateTransactionByID(ctx context.Context, token string, trans
 	})
 
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return database.Transaction{}, err
-		}
 		return database.Transaction{}, err
 	}
 
 	return transaction, nil
 }
 
-func (s *Service) DeleteTransactionByID(ctx context.Context, token string, transactionID uuid.UUID) (database.Transaction, error) {
+func (s *Service) DeleteTransactionByID(ctx context.Context, token string, transactionID uuid.UUID) error {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
-		return database.Transaction{}, err
+		return err
 	}
 
 	err = s.db.DeleteTransactionByID(ctx, database.DeleteTransactionByIDParams{
@@ -95,8 +91,8 @@ func (s *Service) DeleteTransactionByID(ctx context.Context, token string, trans
 		UserID: userID,
 	})
 	if err != nil {
-		return database.Transaction{}, err
+		return err
 	}
 
-	return database.Transaction{}, nil
+	return nil
 }

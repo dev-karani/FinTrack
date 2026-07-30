@@ -132,6 +132,7 @@ func (h *Handler) DeleteTransactionByID(w http.ResponseWriter, r *http.Request) 
 	transactionID, err := uuid.Parse(r.PathValue("transactionID"))
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusBadRequest, "invalid transaction ID")
+		return
 	}
 	// get token
 	token, err := auth.GetBearerToken(r.Header)
