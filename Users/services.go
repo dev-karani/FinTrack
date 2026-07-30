@@ -41,17 +41,12 @@ func (s *Service) DeleteUser(ctx context.Context, token string) error {
 	if err != nil {
 		return err
 	}
+
+	err = s.db.RevokeAllRefreshTokensForUser(ctx, userID)
+	if err != nil {
+		return err
+	}
 	err = s.db.DeleteUserByID(ctx, userID)
-	if err != nil {
-		return err
-	}
-
-	refreshToken, err := s.db.GetAllTransactionsByUserID(ctx, userID)
-	if err != nil {
-		return err
-	}
-
-	err = s.db.RevokeRefreshToken(ctx, refreshToken)
 	if err != nil {
 		return err
 	}
