@@ -20,7 +20,7 @@ VALUES (
     now(),
     now()
 )
-RETURNING id, email, created_at, updated_at, hashed_password
+RETURNING id, email, created_at, updated_at, hashed_password, deleted_at
 `
 
 type CreateUserParams struct {
@@ -37,12 +37,26 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.HashedPassword,
+		&i.DeletedAt,
 	)
 	return i, err
 }
 
+const deleteUserByID = `-- name: DeleteUserByID :exec
+UPDATE users
+SET 
+    deleted_at=now()
+WHERE id=$1
+AND deleted_at IS NULL
+`
+
+func (q *Queries) DeleteUserByID(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteUserByID, id)
+	return err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, created_at, updated_at, hashed_password FROM users
+SELECT id, email, created_at, updated_at, hashed_password, deleted_at FROM users
 WHERE email = $1
 `
 
@@ -55,12 +69,13 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.HashedPassword,
+		&i.DeletedAt,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, email, created_at, updated_at, hashed_password FROM users
+SELECT id, email, created_at, updated_at, hashed_password, deleted_at FROM users
 WHERE id= $1
 `
 
@@ -73,6 +88,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.HashedPassword,
+		&i.DeletedAt,
 	)
 	return i, err
 }
@@ -84,7 +100,7 @@ SET
     hashed_password = $3,
     updated_at= now()
 WHERE id =$1
-RETURNING id, email, created_at, updated_at, hashed_password
+RETURNING id, email, created_at, updated_at, hashed_password, deleted_at
 `
 
 type UpdateUserParams struct {
@@ -102,6 +118,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.HashedPassword,
+		&i.DeletedAt,
 	)
 	return i, err
 }
