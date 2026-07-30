@@ -57,8 +57,21 @@ func (s *Service) GetUserTransactions(ctx context.Context, token string) ([]data
 }
 
 // get transaction
-func (s *Service) GetTransactionByID(ctx context.Context, token string) (database.Transaction, error) {
+func (s *Service) GetTransactionByID(ctx context.Context, token string, transactionID uuid.UUID) (database.Transaction, error) {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return database.Transaction{}, err
+	}
 
+	transaction, err := s.db.GetTransactionByID(ctx, database.GetTransactionByIDParams{
+		UserID: userID,
+		ID:     transactionID,
+	})
+	if err != nil {
+		return database.Transaction{}, err
+	}
+
+	return transaction, nil
 }
 func (s *Service) UpdateTransactionByID(ctx context.Context, token string, transactionID uuid.UUID, amount int64, label, category, source, destination string) (database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)

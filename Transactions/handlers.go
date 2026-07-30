@@ -89,7 +89,13 @@ func (h *Handler) GetTransactionByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transaction, err := h.service.GetTransactionByID(r.Context(), token)
+	transactionID, err := uuid.Parse(r.PathValue("transactionID"))
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid transactionID")
+		return
+	}
+
+	transaction, err := h.service.GetTransactionByID(r.Context(), token, transactionID)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to get single transaction")
 		return
@@ -99,7 +105,7 @@ func (h *Handler) GetTransactionByID(w http.ResponseWriter, r *http.Request) {
 		Amount:      transaction.Amount,
 		Label:       transaction.Label,
 		Category:    transaction.Category,
-		Source:      transaction.Source,
+		Source:      transaction.Destination,
 		Destination: transaction.Source,
 		CreatedAt:   transaction.CreatedAt,
 		UpdatedAt:   transaction.UpdatedAt,
