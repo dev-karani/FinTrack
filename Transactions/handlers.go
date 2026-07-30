@@ -141,7 +141,7 @@ func (h *Handler) DeleteTransactionByID(w http.ResponseWriter, r *http.Request) 
 	}
 
 	//pass id to transaction service
-	transaction, err := h.service.DeleteTranactionByID(r.Context(), token)
+	_, err = h.service.DeleteTransactionByID(r.Context(), token, transactionID)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to delete transaction")
 		return

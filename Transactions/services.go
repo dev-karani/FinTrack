@@ -6,6 +6,7 @@ import (
 
 	"github.com/dev-karani/FinTrack/internal/auth"
 	"github.com/dev-karani/FinTrack/internal/database"
+
 	"github.com/google/uuid"
 )
 
@@ -42,6 +43,7 @@ func (s *Service) CreateTransaction(ctx context.Context, token string, amount in
 
 }
 
+// Get all user transactions
 func (s *Service) GetUserTransactions(ctx context.Context, token string) ([]database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
@@ -55,6 +57,7 @@ func (s *Service) GetUserTransactions(ctx context.Context, token string) ([]data
 	return transactions, nil
 }
 
+// get trans
 func (s *Service) UpdateTransactionByID(ctx context.Context, token string, transactionID uuid.UUID, amount int64, category, label, source, destination string) (database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
@@ -81,9 +84,19 @@ func (s *Service) UpdateTransactionByID(ctx context.Context, token string, trans
 	return transaction, nil
 }
 
-func (s *Service) DeleteTransactionByID() (database.Transaction, error) {
-	//receive token
-	//authenticate user
-	//
+func (s *Service) DeleteTransactionByID(ctx context.Context, token string, transactionID uuid.UUID) (database.Transaction, error) {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return database.Transaction{}, err
+	}
 
+	err = s.db.DeleteTransactionByID(ctx, database.DeleteTransactionByIDParams{
+		ID:     transactionID,
+		UserID: userID,
+	})
+	if err != nil {
+		return database.Transaction{}, err
+	}
+
+	return database.Transaction{}, nil
 }

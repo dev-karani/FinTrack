@@ -61,22 +61,30 @@ func (q *Queries) CreateTransaction(ctx context.Context, arg CreateTransactionPa
 	return i, err
 }
 
-const deleteTransactionBYID = `-- name: DeleteTransactionBYID :exec
+const deleteTransactionByID = `-- name: DeleteTransactionByID :exec
 UPDATE transactions
 SET
-    deleted_at=True
+    deleted_at=now()
 WHERE id=$1
+AND user_id=$2
+AND deleted_at IS NULL
 `
 
-func (q *Queries) DeleteTransactionBYID(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, deleteTransactionBYID, id)
+type DeleteTransactionByIDParams struct {
+	ID     uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"user_id"`
+}
+
+func (q *Queries) DeleteTransactionByID(ctx context.Context, arg DeleteTransactionByIDParams) error {
+	_, err := q.db.ExecContext(ctx, deleteTransactionByID, arg.ID, arg.UserID)
 	return err
 }
 
 const getAllTransactionsByUserID = `-- name: GetAllTransactionsByUserID :many
 SELECT id, user_id, amount, label, category, source, destination, created_at, updated_at, deleted_at FROM transactions
 WHERE user_id= $1
-ORDER BY created_at ASC
+AND deleted_at IS NULL
+ORDER BY created_at DESC
 `
 
 func (q *Queries) GetAllTransactionsByUserID(ctx context.Context, userID uuid.UUID) ([]Transaction, error) {
@@ -116,10 +124,17 @@ func (q *Queries) GetAllTransactionsByUserID(ctx context.Context, userID uuid.UU
 const getTransactionByID = `-- name: GetTransactionByID :one
 SELECT id, user_id, amount, label, category, source, destination, created_at, updated_at, deleted_at FROM transactions
 WHERE id=$1
+AND user_id=$2
+AND deleted_at IS NULL
 `
 
-func (q *Queries) GetTransactionByID(ctx context.Context, id uuid.UUID) (Transaction, error) {
-	row := q.db.QueryRowContext(ctx, getTransactionByID, id)
+type GetTransactionByIDParams struct {
+	ID     uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"user_id"`
+}
+
+func (q *Queries) GetTransactionByID(ctx context.Context, arg GetTransactionByIDParams) (Transaction, error) {
+	row := q.db.QueryRowContext(ctx, getTransactionByID, arg.ID, arg.UserID)
 	var i Transaction
 	err := row.Scan(
 		&i.ID,
@@ -143,10 +158,11 @@ SET
     label=$4,
     category=$5,
     source=$6,
-    destination=$7
+    destination=$7,
+    updated_at=now()
 WHERE id=$1
 AND user_id=$2
-AND deleted_at=NULL
+AND deleted_at IS NULL
 RETURNING id, user_id, amount, label, category, source, destination, created_at, updated_at, deleted_at
 `
 
