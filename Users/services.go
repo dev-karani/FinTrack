@@ -46,6 +46,8 @@ func (s *Service) DeleteUser(ctx context.Context, token string) error {
 		return err
 	}
 
+	refreshToken, err := s.db.Get
+
 	return nil
 
 }
