@@ -17,11 +17,12 @@ RETURNING *;
 SELECT * FROM transactions
 WHERE user_id= $1
 AND deleted_at IS NULL
-ORDER BY created_at ASC;
+ORDER BY created_at DESC;
 
 -- name: GetTransactionByID :one
 SELECT * FROM transactions
 WHERE id=$1
+AND user_id=$2
 AND deleted_at IS NULL;
 
 -- name: UpdateTransactionByID :one
@@ -31,17 +32,17 @@ SET
     label=$4,
     category=$5,
     source=$6,
-    destination=$7
+    destination=$7,
+    updated_at=now()
 WHERE id=$1
 AND user_id=$2
 AND deleted_at IS NULL
 RETURNING *;
 
--- name: DeleteTransactionBYID :exec
+-- name: DeleteTransactionByID :exec
 UPDATE transactions
 SET
-    deleted_at=True
+    deleted_at=now()
 WHERE id=$1
 AND user_id=$2
-AND deleted_at IS NULL
-RETURNING *;
+AND deleted_at IS NULL;
