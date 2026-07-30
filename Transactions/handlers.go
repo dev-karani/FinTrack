@@ -42,6 +42,7 @@ func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpx.RespondWithJSON(w, http.StatusCreated, createTransactionResponse{
+		ID:          transaction.ID,
 		Amount:      transaction.Amount,
 		Label:       transaction.Label,
 		Category:    transaction.Category,
@@ -68,6 +69,7 @@ func (h *Handler) GetAllUserTransactions(w http.ResponseWriter, r *http.Request)
 	transactionResponse := make([]createTransactionResponse, 0, len(transactions))
 	for _, transaction := range transactions {
 		transactionResponse = append(transactionResponse, createTransactionResponse{
+			ID:          transaction.ID,
 			Amount:      transaction.Amount,
 			Label:       transaction.Label,
 			Category:    transaction.Category,
@@ -80,6 +82,29 @@ func (h *Handler) GetAllUserTransactions(w http.ResponseWriter, r *http.Request)
 	httpx.RespondWithJSON(w, http.StatusOK, transactionResponse)
 }
 
+func (h *Handler) GetTransactionByID(w http.ResponseWriter, r *http.Request) {
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
+		return
+	}
+
+	transaction, err := h.service.GetTransactionByID(r.Context(), token)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to get single transaction")
+		return
+	}
+	httpx.RespondWithJSON(w, http.StatusOK, createTransactionResponse{
+		ID:          transaction.ID,
+		Amount:      transaction.Amount,
+		Label:       transaction.Label,
+		Category:    transaction.Category,
+		Source:      transaction.Source,
+		Destination: transaction.Source,
+		CreatedAt:   transaction.CreatedAt,
+		UpdatedAt:   transaction.UpdatedAt,
+	})
+}
 func (h *Handler) UpdateTransaction(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	req := updateTransactionRequest{}
@@ -142,7 +167,7 @@ func (h *Handler) DeleteTransactionByID(w http.ResponseWriter, r *http.Request) 
 	}
 
 	//pass id to transaction service
-	_, err = h.service.DeleteTransactionByID(r.Context(), token, transactionID)
+	err = h.service.DeleteTransactionByID(r.Context(), token, transactionID)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to delete transaction")
 		return
