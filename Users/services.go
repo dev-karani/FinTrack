@@ -8,12 +8,14 @@ import (
 )
 
 type Service struct {
-	db *database.Queries
+	db        *database.Queries
+	jwtSecret string
 }
 
-func NewService(db *database.Queries) *Service {
+func NewService(db *database.Queries, jwtSecret string) *Service {
 	return &Service{
-		db: db,
+		db:        db,
+		jwtSecret: jwtSecret,
 	}
 }
 
@@ -34,6 +36,16 @@ func (s *Service) CreateUser(ctx context.Context, email string, password string)
 	return dbUser, nil
 }
 
-func (s *Service) DeleteUser (ctx context.Context, token string) (error) {
-	userID, err := auth.ValidateJWT(token, s.db.)
+func (s *Service) DeleteUser(ctx context.Context, token string) error {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return err
+	}
+	err = s.db.DeleteUserByID(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }

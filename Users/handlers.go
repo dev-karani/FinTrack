@@ -14,7 +14,7 @@ type Handler struct {
 }
 
 func NewHandler(db *database.Queries, jwtSecret string) *Handler {
-	service := NewService(db)
+	service := NewService(db, jwtSecret)
 
 	return &Handler{
 		service: service,
@@ -50,9 +50,10 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.service.db.DeleteTransactionByID(r.Context(), token)
+	err = h.service.DeleteUser(r.Context(), token)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusInternalServerError, "")
 	}
+	w.WriteHeader(http.StatusNoContent)
 
 }
