@@ -66,9 +66,18 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDetails, err := h.service.Login(r.Context(), req.Email, req.Password)
+	userLoginDetails, err := h.service.Login(r.Context(), req.Email, req.Password)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusUnauthorized, "invalid email or passwrod")
 		return
 	}
+
+	httpx.RespondWithJSON(w, http.StatusOK, LoginResponse{
+		ID:           userLoginDetails.User.ID,
+		CreatedAt:    userLoginDetails.User.CreatedAt,
+		UpdatedAt:    userLoginDetails.User.UpdatedAt,
+		Email:        userLoginDetails.User.Email,
+		JWTToken:     userLoginDetails.JWTToken,
+		RefreshToken: userLoginDetails.RefreshToken,
+	})
 }

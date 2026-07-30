@@ -56,25 +56,31 @@ func (s *Service) DeleteUser(ctx context.Context, token string) error {
 
 }
 
-func (s *Service) Login(ctx context.Context, email, password string) (database.Transaction, error) {
+type LoginResult struct {
+	User         database.User
+	JWTToken     string
+	RefreshToken string
+}
+
+func (s *Service) Login(ctx context.Context, email, password string) (LoginResult, error) {
 	user, err := s.db.GetUserByEmail(ctx, email)
 	if err != nil {
-		return database.Transaction{}, err
+		return LoginResult{}, err
 	}
 
 	match, err := auth.CheckPasswordHash(password, user.HashedPassword)
 	if err != nil || !match {
-		return database.Transaction{}, err
+		return LoginResult{}, err
 	}
 
 	jwtToken, err := auth.MakeJWT(user.ID, s.jwtSecret, time.Hour)
 	if err != nil {
-		return database.Transaction{}, err
+		return LoginResult{}, err
 	}
 
 	refreshToken, err := auth.MakeRefreshToken()
 	if err != nil {
-		return database.Transaction{}, err
+		return LoginResult{}, err
 	}
 
 	now := time.Now().UTC()
@@ -86,5 +92,14 @@ func (s *Service) Login(ctx context.Context, email, password string) (database.T
 		UserID:    user.ID,
 		ExpiresAt: now.Add(60 * 24 * time.Hour),
 	})
+	if err != nil {
+		return LoginResult{}, err
+	}
+	userLogin := LoginResult{
+		User:         user,
+		JWTToken:     jwtToken,
+		RefreshToken: refreshToken,
+	}
 
+	return userLogin, nil
 }
