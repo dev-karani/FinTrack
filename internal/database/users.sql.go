@@ -58,6 +58,7 @@ func (q *Queries) DeleteUserByID(ctx context.Context, id uuid.UUID) error {
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, email, created_at, updated_at, hashed_password, deleted_at FROM users
 WHERE email = $1
+AND deleted_at IS NULL
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
@@ -77,6 +78,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 const getUserByID = `-- name: GetUserByID :one
 SELECT id, email, created_at, updated_at, hashed_password, deleted_at FROM users
 WHERE id= $1
+AND deleted_at IS NULL
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id uuid.UUID) (User, error) {
