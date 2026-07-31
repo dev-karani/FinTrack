@@ -105,7 +105,12 @@ func (s *Service) Login(ctx context.Context, email, password string) (LoginResul
 }
 
 func (s *Service) Revoke(ctx context.Context, token string) error {
-	err := s.db.RevokeRefreshToken(ctx, token)
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return err
+	}
+
+	err = s.db.RevokeAllRefreshTokensForUser(ctx, userID)
 	if err != nil {
 		return err
 	}
