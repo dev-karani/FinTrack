@@ -15,7 +15,8 @@ UPDATE refresh_tokens
 SET 
     revoked_at=Now(),
     updated_at=Now()
-WHERE token = $1;
+WHERE token = $1
+AND revoked_at IS NULL;
 
 -- name: GetRefreshToken :one
 SELECT * FROM refresh_tokens
