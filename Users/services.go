@@ -117,23 +117,23 @@ func (s *Service) Revoke(ctx context.Context, token string) error {
 	return nil
 }
 
-type RefreshToken struct {
+type RefreshResult struct {
 	JWTToken string
 }
 
-func (s *Service) RefreshToken(ctx context.Context, token string) (RefreshToken, error) {
+func (s *Service) RefreshToken(ctx context.Context, token string) (RefreshResult, error) {
 
 	dbToken, err := s.db.GetRefreshToken(ctx, token)
 	if err != nil {
-		return RefreshToken{}, nil
+		return RefreshResult{}, err
 	}
 
 	jwtToken, err := auth.MakeJWT(dbToken.UserID, s.jwtSecret, time.Hour)
 	if err != nil {
-		return RefreshToken{}, err
+		return RefreshResult{}, err
 	}
 
-	newJwtRefresh := RefreshToken{
+	newJwtRefresh := RefreshResult{
 		JWTToken: jwtToken,
 	}
 

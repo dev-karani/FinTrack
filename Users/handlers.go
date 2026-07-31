@@ -108,6 +108,7 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 	verifiedToken, err := h.service.RefreshToken(r.Context(), refreshToken)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusUnauthorized, "invalid refresh token")
+		return
 	}
 
 	newJwt := verifiedToken.JWTToken
