@@ -124,10 +124,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		httpx.RespondWithError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	if len(req.Password) < 8 {
-		httpx.RespondWithError(w, http.StatusBadRequest, "invalid password length")
-		return
-	}
+
 
 	token, err := auth.GetBearerToken(r.Header)
 	if err != nil {

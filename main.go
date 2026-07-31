@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	transactions "github.com/dev-karani/FinTrack/Transactions"
+	users "github.com/dev-karani/FinTrack/Users"
 	"github.com/dev-karani/FinTrack/internal/database"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -44,16 +46,19 @@ func main() {
 	defer db.Close()
 
 	cfg := &apiConfig{
-		db:        database.New(db),
-		platform:  platform,
+		db: database.New(db),
+		//platform:  platform,
 		jwtSecret: jwtSecret,
 	}
+
+	usersHandler := users.NewHandler(cfg.db, cfg.jwtSecret)
+	transactionsHandler := transactions.NewHandler(cfg.db, cfg.jwtSecret)
 
 	//	initialise server handler
 	mux := http.NewServeMux()
 
 	// register routes
-	registerRoutes(mux, cfg)
+	registerRoutes(mux, usersHandler, transactionsHandler)
 
 	// init server struct
 	server := &http.Server{

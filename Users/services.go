@@ -145,7 +145,9 @@ func (s *Service) UpdateUser(ctx context.Context, token, email, password string)
 	if err != nil {
 		return database.User{}, err
 	}
-
+	if len(password) < 8 {
+		return database.User{}, err
+	}
 	hashedPassword, err := auth.HashPassword(password)
 	if err != nil {
 		return database.User{}, err
