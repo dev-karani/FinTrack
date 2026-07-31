@@ -36,6 +36,7 @@ type updatedUserResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Email     string    `json:"email"`
 }
+
 // user response
 type UserResponse struct {
 	ID        uuid.UUID `json:"id"`
