@@ -97,3 +97,21 @@ func (h *Handler) Revoke(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
+	refreshToken, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusUnauthorized, "missing refresh token")
+		return
+	}
+
+	verifiedToken, err := h.service.RefreshToken(r.Context(), refreshToken)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusUnauthorized, "invalid refresh token")
+	}
+
+	newJwt := verifiedToken.JWTToken
+	httpx.RespondWithJSON(w, http.StatusOK, RefreshTokenResponse{
+		JWTToken: newJwt,
+	})
+}

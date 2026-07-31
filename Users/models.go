@@ -39,6 +39,5 @@ type UserResponse struct {
 }
 
 type RefreshTokenResponse struct {
-	JWTToken     string `json:"jwt_token"`
-	RefreshToken string `json:"refresh_token"`
+	JWTToken string `json:"jwt_token"`
 }
