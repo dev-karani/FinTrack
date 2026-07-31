@@ -103,3 +103,11 @@ func (s *Service) Login(ctx context.Context, email, password string) (LoginResul
 
 	return userLogin, nil
 }
+
+func (s *Service) Revoke(ctx context.Context, token string) error {
+	err := s.db.RevokeRefreshToken(ctx, token)
+	if err != nil {
+		return err
+	}
+	return nil
+}

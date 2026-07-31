@@ -81,3 +81,19 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		RefreshToken: userLoginDetails.RefreshToken,
 	})
 }
+
+func (h *Handler) Revoke(w http.ResponseWriter, r *http.Request) {
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	err = h.service.Revoke(r.Context(), token)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "could not revoke refrsh token")
+
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
