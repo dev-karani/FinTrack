@@ -116,3 +116,16 @@ func (s *Service) Revoke(ctx context.Context, token string) error {
 	}
 	return nil
 }
+
+func (s *Service) RefreshToken(ctx context.Context, token string) (database.Transaction, error) {
+
+	dbToken, err := s.db.GetRefreshToken(ctx, token)
+	if err != nil {
+		return database.Transaction{}, nil
+	}
+
+	jwtToken, err := auth.MakeJWT(dbToken.UserID, s.jwtSecret, time.Hour)
+	if err != nil {
+		return database.Transaction{}, err
+	}
+}

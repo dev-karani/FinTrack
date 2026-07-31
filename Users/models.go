@@ -17,14 +17,13 @@ type loginRequest struct {
 	Password string `json:"password"`
 }
 
-
 type LoginResponse struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Email     string    `json:"email"`
-	JWTToken     string   `json:"jwt_token"`
-	RefreshToken string `json:"refresh_token"`
+	ID           uuid.UUID `json:"id"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	Email        string    `json:"email"`
+	JWTToken     string    `json:"jwt_token"`
+	RefreshToken string    `json:"refresh_token"`
 }
 type updateUserRequest struct {
 	Email    string `json:"email"`
@@ -39,4 +38,7 @@ type UserResponse struct {
 	Email     string    `json:"email"`
 }
 
-
+type RefreshTokenResponse struct {
+	JWTToken     string `json:"jwt_token"`
+	RefreshToken string `json:"refresh_token"`
+}
