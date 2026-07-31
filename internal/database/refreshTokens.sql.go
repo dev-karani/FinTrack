@@ -94,6 +94,7 @@ SET
     revoked_at=Now(),
     updated_at=Now()
 WHERE token = $1
+AND revoked_at IS NULL
 `
 
 func (q *Queries) RevokeRefreshToken(ctx context.Context, token string) error {
