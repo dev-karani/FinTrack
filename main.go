@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	transactions "github.com/dev-karani/FinTrack/Transactions"
-	users "github.com/dev-karani/FinTrack/Users"
 	"github.com/dev-karani/FinTrack/internal/database"
+	transactions "github.com/dev-karani/FinTrack/transactions"
+	users "github.com/dev-karani/FinTrack/users"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	transactions "github.com/dev-karani/FinTrack/Transactions"
-	users "github.com/dev-karani/FinTrack/Users"
+	transactions "github.com/dev-karani/FinTrack/transactions"
+	users "github.com/dev-karani/FinTrack/users"
 )
 
 const apiV1 = "/api/v1"
