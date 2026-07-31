@@ -18,7 +18,7 @@ func registerRoutes(
 	// Root
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		fmt.Fprint(w, "<h1>FinTrack journey is live 🚀</h1>")
+		fmt.Fprint(w, "<h1>FinTrack journey is live </h1>")
 	})
 
 	// Health
