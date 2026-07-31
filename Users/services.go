@@ -139,3 +139,27 @@ func (s *Service) RefreshToken(ctx context.Context, token string) (RefreshResult
 
 	return newJwtRefresh, nil
 }
+
+func (s *Service) UpdateUser(ctx context.Context, token, email, password string) (database.User, error) {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return database.User{}, err
+	}
+
+	hashedPassword, err := auth.HashPassword(password)
+	if err != nil {
+		return database.User{}, err
+	}
+
+	updatedUser, err := s.db.UpdateUser(ctx, database.UpdateUserParams{
+		ID:             userID,
+		Email:          email,
+		HashedPassword: hashedPassword,
+	})
+
+	if err != nil {
+		return database.User{}, err
+	}
+
+	return updatedUser, nil
+}

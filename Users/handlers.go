@@ -116,3 +116,24 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 		JWTToken: newJwt,
 	})
 }
+
+func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	req := updateUserRequest{}
+	if err := decoder.Decode(&req); err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusUnauthorized, "missing token")
+		return
+	}
+
+	user, err := h.service.UpdateUser(r.Context(), token, req.Email, req.Password)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to update user")
+		return
+	}
+}
