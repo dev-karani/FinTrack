@@ -47,7 +47,7 @@ WHERE id=$1
 AND user_id=$2
 AND deleted_at IS NULL;
 
--- name: GetBalance :one
+-- name: GetUserBalance :one
 SELECT  
     COALESCE(SUM(
             CASE 
@@ -60,12 +60,21 @@ WHERE user_id=$1
 AND deleted_at IS NULL;
 
 
+-- name: GetUserExpenses :one
+SELECT
+    COALESCE(SUM(amount), 0) AS total_expenses
+FROM transactions
+WHERE user_id=$1
+AND category='DEBIT'
+AND deleted_at IS NULL;
 
-
-
-
-
-
+-- name: GetUserIncome :one
+SELECT 
+    COALESCE(SUM(amount), 0) AS total_income
+FROM transactions
+WHERE user_id=$1
+AND  category='CREDIT'
+AND deleted_at IS NULL;
 
 
 
