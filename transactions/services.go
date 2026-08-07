@@ -26,6 +26,11 @@ func (s *Service) CreateTransaction(ctx context.Context, token string, amount in
 	if err != nil {
 		return database.Transaction{}, err
 	}
+
+	if err = validateCategory(category); err != nil {
+		return database.Transaction{}, err
+	}
+
 	transaction, err := s.db.CreateTransaction(ctx, database.CreateTransactionParams{
 		UserID:      userID,
 		Amount:      amount,
@@ -76,6 +81,10 @@ func (s *Service) GetTransactionByID(ctx context.Context, token string, transact
 func (s *Service) UpdateTransactionByID(ctx context.Context, token string, transactionID uuid.UUID, amount int64, label, category, source, destination string) (database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
+		return database.Transaction{}, err
+	}
+
+	if err = validateCategory(category); err != nil {
 		return database.Transaction{}, err
 	}
 
