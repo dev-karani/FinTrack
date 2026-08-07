@@ -75,6 +75,20 @@ func (s *Service) GetUserBalance(ctx context.Context, token string) (int64, erro
 	return balance, nil
 }
 
+func (s *Service) GetUserIncome(ctx context.Context, token string) (int64, error) {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return 0, nil
+	}
+
+	income, err := s.db.GetUserIncome(ctx, userID)
+	if err != nil {
+		return 0, nil
+	}
+
+	return income, nil
+}
+
 // get transaction
 func (s *Service) GetTransactionByID(ctx context.Context, token string, transactionID uuid.UUID) (database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)

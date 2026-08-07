@@ -65,7 +65,7 @@ AND deleted_at IS NULL;
 
 -- name: GetUserExpenses :one
 SELECT
-    COALESCE(SUM(amount), 0) AS total_expenses
+COALESCE(SUM(amount), 0)::BIGINT AS total_expenses
 FROM transactions
 WHERE user_id=$1
 AND category='DEBIT'
