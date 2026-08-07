@@ -39,7 +39,10 @@ func registerRoutes(
 
 	mux.HandleFunc("POST "+apiV1+"/transactions", transactionsHandler.CreateTransaction)
 	mux.HandleFunc("GET "+apiV1+"/transactions", transactionsHandler.GetAllUserTransactions)
-	//mux.HandleFunc("GET " +apiV1+"/balance", transactionsHandler.)
+
+	mux.HandleFunc("GET "+apiV1+"/balance", transactionsHandler.GetUserBalance)
+	mux.HandleFunc("GET "+apiV1+"/income", transactionsHandler.GetUserIncome)
+	mux.HandleFunc("GET "+apiV1+"/expenses", transactionsHandler.GetUserExpenses)
 
 	mux.HandleFunc("GET "+apiV1+"/transactions/{transactionID}", transactionsHandler.GetTransactionByID)
 	mux.HandleFunc("PUT "+apiV1+"/transactions/{transactionID}", transactionsHandler.UpdateTransaction)
