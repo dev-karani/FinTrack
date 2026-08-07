@@ -46,3 +46,34 @@ SET
 WHERE id=$1
 AND user_id=$2
 AND deleted_at IS NULL;
+
+-- name: GetBalance :one
+SELECT  
+    COALESCE(SUM(
+            CASE 
+            WHEN category = 'CREDIT' THEN amount
+            WHEN category = 'DEBIT' THEN  -amount
+            END
+    ), 0) AS balance
+FROM transactions
+WHERE user_id=$1
+AND deleted_at IS NULL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
