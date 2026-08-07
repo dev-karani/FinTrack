@@ -78,15 +78,28 @@ func (s *Service) GetUserBalance(ctx context.Context, token string) (int64, erro
 func (s *Service) GetUserIncome(ctx context.Context, token string) (int64, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 
 	income, err := s.db.GetUserIncome(ctx, userID)
 	if err != nil {
-		return 0, nil
+		return 0, err
 	}
 
 	return income, nil
+}
+func (s *Service) GetUserExpenses(ctx context.Context, token string) (int64, error) {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return 0, err
+	}
+
+	expenses, err := s.db.GetUserExpenses(ctx, userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return expenses, nil
 }
 
 // get transaction
