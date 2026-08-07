@@ -61,6 +61,20 @@ func (s *Service) GetUserTransactions(ctx context.Context, token string) ([]data
 	return transactions, nil
 }
 
+func (s *Service) GetUserBalance(ctx context.Context, token string) (int64, error) {
+	userID, err := auth.ValidateJWT(token, s.jwtSecret)
+	if err != nil {
+		return 0, err
+	}
+
+	balance, err := s.db.GetUserBalance(ctx, userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return balance, nil
+}
+
 // get transaction
 func (s *Service) GetTransactionByID(ctx context.Context, token string, transactionID uuid.UUID) (database.Transaction, error) {
 	userID, err := auth.ValidateJWT(token, s.jwtSecret)
@@ -89,7 +103,8 @@ func (s *Service) UpdateTransactionByID(ctx context.Context, token string, trans
 	}
 
 	transaction, err := s.db.UpdateTransactionByID(ctx, database.UpdateTransactionByIDParams{
-		UserID:      userID,
+		UserID: userID,
+
 		ID:          transactionID,
 		Amount:      amount,
 		Category:    category,
@@ -112,7 +127,8 @@ func (s *Service) DeleteTransactionByID(ctx context.Context, token string, trans
 	}
 
 	err = s.db.DeleteTransactionByID(ctx, database.DeleteTransactionByIDParams{
-		ID:     transactionID,
+		ID: transactionID,
+
 		UserID: userID,
 	})
 	if err != nil {

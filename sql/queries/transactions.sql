@@ -49,12 +49,15 @@ AND deleted_at IS NULL;
 
 -- name: GetUserBalance :one
 SELECT  
-    COALESCE(SUM(
+    COALESCE(
+        SUM(
             CASE 
-            WHEN category = 'CREDIT' THEN amount
-            WHEN category = 'DEBIT' THEN  -amount
+                WHEN category = 'CREDIT' THEN amount
+                WHEN category = 'DEBIT' THEN  -amount
             END
-    ), 0) AS balance
+    ),
+    0
+)::BIGINT AS balance
 FROM transactions
 WHERE user_id=$1
 AND deleted_at IS NULL;

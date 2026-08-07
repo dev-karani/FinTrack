@@ -53,6 +53,23 @@ func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (h *Handler) GetUserBalance(w http.ResponseWriter, r http.Request) {
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
+		return
+	}
+
+	balance, err := h.service.GetUserBalance(r.Context(), token)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to get user balance")
+		return
+	}
+
+	httpx.RespondWithJSON(w, http.StatusOK, BalanceResponse{
+		Balance: balance,
+	})
+}
 func (h *Handler) GetAllUserTransactions(w http.ResponseWriter, r *http.Request) {
 	token, err := auth.GetBearerToken(r.Header)
 	if err != nil {
