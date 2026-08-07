@@ -53,7 +53,7 @@ func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (h *Handler) GetUserBalance(w http.ResponseWriter, r http.Request) {
+func (h *Handler) GetUserBalance(w http.ResponseWriter, r *http.Request) {
 	token, err := auth.GetBearerToken(r.Header)
 	if err != nil {
 		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
