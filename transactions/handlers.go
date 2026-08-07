@@ -70,6 +70,24 @@ func (h *Handler) GetUserBalance(w http.ResponseWriter, r http.Request) {
 		Balance: balance,
 	})
 }
+
+func (h *Handler) GetUserExpenses(w http.ResponseWriter, r *http.Request) {
+	token, err := auth.GetBearerToken(r.Header)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusBadRequest, "invalid auth header")
+		return
+	}
+
+	income, err := h.service.GetUserIncome(r.Context(), token)
+	if err != nil {
+		httpx.RespondWithError(w, http.StatusInternalServerError, "failed to get user income")
+		return
+	}
+	httpx.RespondWithJSON(w, http.StatusOK, IncomeResponse{
+		Income: income,
+	})
+}
+
 func (h *Handler) GetAllUserTransactions(w http.ResponseWriter, r *http.Request) {
 	token, err := auth.GetBearerToken(r.Header)
 	if err != nil {
