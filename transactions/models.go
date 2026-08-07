@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// create model
 type createTransactionRequest struct {
 	Amount      int64  `json:"amount"`
 	Label       string `json:"label"`
@@ -25,6 +26,7 @@ type createTransactionResponse struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
+// update model
 type updateTransactionRequest struct {
 	ID          uuid.UUID `json:"id"`
 	Amount      int64     `json:"amount"`
@@ -43,4 +45,17 @@ type updateTransactionResponse struct {
 	Destination string    `json:"destination"`
 
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+// get balance model
+type BalanceResponse struct {
+	Balance int64 `json:"balance"`
+}
+
+type IncomeResponse struct {
+	Income int64 `json:"income"`
+}
+
+type ExpenseResponse struct {
+	Expense int64 `json:"expense"`
 }
