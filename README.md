@@ -87,6 +87,11 @@ The API is designed around modern backend development practices, including layer
 | GET    | `/api/v1/transactions/{transactionID}` | Retrieve a specific transaction |
 | PUT    | `/api/v1/transactions/{transactionID}` | Update a transaction            |
 | DELETE | `/api/v1/transactions/{transactionID}` | Soft delete a transaction       |
+| GET    | `/api/v1/transactions/balance`         | Get user balance                |
+| GET    | `/api/v1/transactions/income`          | Get user income                 |
+| GET    | `/api/v1/transactions/expenses`        | Get user expenses               |
+
+
 
 ## Getting Started
 
