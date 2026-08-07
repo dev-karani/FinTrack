@@ -54,7 +54,8 @@ func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshToken
 }
 
 const getRefreshToken = `-- name: GetRefreshToken :one
-SELECT token, expires_at, revoked_at, user_id, created_at, updated_at FROM refresh_tokens
+SELECT token, expires_at, revoked_at, user_id, created_at, updated_at 
+FROM refresh_tokens
 WHERE token=$1
 AND revoked_at IS NULL
 AND expires_at > NOW()

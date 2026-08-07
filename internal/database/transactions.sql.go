@@ -121,6 +121,26 @@ func (q *Queries) GetAllTransactionsByUserID(ctx context.Context, userID uuid.UU
 	return items, nil
 }
 
+const getBalance = `-- name: GetBalance :one
+SELECT  
+    COALESCE(SUM(
+            CASE 
+            WHEN category = 'CREDIT' THEN amount
+            WHEN category = 'DEBIT' THEN  -amount
+            END
+    ), 0) AS balance
+FROM transactions
+WHERE user_id=$1
+AND deleted_at IS NULL
+`
+
+func (q *Queries) GetBalance(ctx context.Context, userID uuid.UUID) (interface{}, error) {
+	row := q.db.QueryRowContext(ctx, getBalance, userID)
+	var balance interface{}
+	err := row.Scan(&balance)
+	return balance, err
+}
+
 const getTransactionByID = `-- name: GetTransactionByID :one
 SELECT id, user_id, amount, label, category, source, destination, created_at, updated_at, deleted_at FROM transactions
 WHERE id=$1
